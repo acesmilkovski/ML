@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <p id="status">Await for TF.js to load</p>
+    <div class="main-panel">
+      <div class="video-panel">
+        <video id="webcam" playsinline muted></video>
+        <div class="controls-row">
+          <button id="enableCam">Enable Cam</button>
+          <div class="class-controls" id="classControls"></div>
+          <button id="addClass" type="button">+ Class</button>
+
+          <button id="reset">Reset</button>
+          <button id="train">Train</button>
+        </div>
+      </div>
+      <div id="snapshots"></div>
+    </div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"> </script>
+  <script src="script.js"></script>
+</body>
+</html>
