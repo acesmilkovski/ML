@@ -90,6 +90,29 @@ button#removeClass {
   min-width: 110px;
 }
 
+#cameraSelect {
+  padding: 0.9rem 1.1rem;
+  border: none;
+  border-radius: 999px;
+  background: #2d74f5;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+  font-size: 1rem;
+}
+
+#cameraSelect:hover,
+#cameraSelect:focus {
+  transform: translateY(-1px);
+  background: #1b5edd;
+}
+
+#cameraSelect option {
+  background: #fff;
+  color: #1d1f21;
+}
+
 .data-collector-group {
   display: flex;
   align-items: center;

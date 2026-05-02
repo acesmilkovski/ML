@@ -6,6 +6,7 @@ const TRAIN = document.getElementById("train");
 const SNAPSHOTS = document.getElementById("snapshots");
 const CLASS_CONTROLS = document.getElementById("classControls");
 const ADD_CLASS = document.getElementById("addClass");
+const CAMERA_SELECT = document.getElementById("cameraSelect");
 let videoFrameAsTensor;
 const MN_INPUT_WIDTH = 224;
 const MN_INPUT_HEIGHT = 224;
@@ -233,25 +234,66 @@ async function loadMobileNetModel() {
 }
 
 loadMobileNetModel();
+enumerateCameras();
 
 function hasGetUserMedia() {
   return !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
 }
 
+async function enumerateCameras() {
+  if (!hasGetUserMedia()) {
+    console.warn("No camera access available");
+    return;
+  }
+
+  try {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const videoDevices = devices.filter(device => device.kind === 'videoinput');
+    
+    if (videoDevices.length > 1) {
+      CAMERA_SELECT.style.display = "block";
+      CAMERA_SELECT.innerHTML = '<option value="">Select Camera</option>';
+      
+      videoDevices.forEach((device, index) => {
+        const option = document.createElement("option");
+        option.value = device.deviceId;
+        option.text = device.label || `Camera ${index + 1}`;
+        CAMERA_SELECT.appendChild(option);
+      });
+    } else if (videoDevices.length === 1) {
+      CAMERA_SELECT.style.display = "none";
+      CAMERA_SELECT.value = videoDevices[0].deviceId;
+    }
+  } catch (err) {
+    console.error("Error enumerating cameras:", err);
+  }
+}
+
 function enableCam() {
   if (hasGetUserMedia()) {
     const constraints = {
-      video: true,
-      width: 640,
-      height: 480
+      video: {
+        width: 640,
+        height: 480
+      },
+      audio: false
     };
+
+    if (CAMERA_SELECT.value) {
+      constraints.video.deviceId = { exact: CAMERA_SELECT.value };
+    }
+
     navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
       WEBCAM.srcObject = stream;
       WEBCAM.play();
       WEBCAM.addEventListener("loadeddata", function () {
         videoPlaying = true;
         ENABLE.classList.add("removed");
+        CAMERA_SELECT.disabled = true;
       });
+    }).catch(function(err) {
+      console.error("Camera access error:", err);
+      alert("Unable to access selected camera. Please check permissions or try another camera.");
     });
   } else {
     console.warn("No Cams");
