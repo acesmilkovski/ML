@@ -11,7 +11,7 @@ let videoFrameAsTensor;
 const MN_INPUT_WIDTH = 224;
 const MN_INPUT_HEIGHT = 224;
 const STOP_DATA_GATER = -1;
-const CLASS_NAMES = ["Class 1", "Class 2"];
+const CLASS_NAMES = ["Класа 1", "Класа 2"];
 let model;
 
 let mobilenet = undefined;
@@ -68,7 +68,7 @@ function renderClassControls() {
     gather.type = "button";
     gather.setAttribute("data-1hot", i);
     gather.setAttribute("data-name", CLASS_NAMES[i]);
-    gather.innerText = `Gather ${CLASS_NAMES[i]}`;
+    gather.innerText = `Собери податок за  ${CLASS_NAMES[i]}`;
     gather.addEventListener("pointerdown", startGatheringForClass);
     gather.addEventListener("pointerup", stopGathering);
     gather.addEventListener("pointerleave", stopGathering);
@@ -106,8 +106,8 @@ function renderClassControls() {
 function renameClassName(event) {
   const button = event.currentTarget;
   const index = parseInt(button.getAttribute("data-class-index"), 10);
-  const currentName = CLASS_NAMES[index] || `Class ${index + 1}`;
-  const newName = prompt("Enter new class name:", currentName);
+  const currentName = CLASS_NAMES[index] || `Класа ${index + 1}`;
+  const newName = prompt("Внеси ново име за класата:", currentName);
 
   if (!newName || !newName.trim()) {
     return;
@@ -119,7 +119,7 @@ function renameClassName(event) {
   const gatherButton = document.querySelector(`button.dataCollector[data-1hot="${index}"]`);
   if (gatherButton) {
     gatherButton.setAttribute("data-name", trimmedName);
-    gatherButton.innerText = `Gather ${trimmedName}`;
+    gatherButton.innerText = `Собери податок за  ${trimmedName}`;
   }
 
   const title = document.getElementById(`snapshot-title-${index}`);
@@ -155,12 +155,12 @@ function createModel() {
 
 function addClass() {
   if (CLASS_NAMES.length >= 5) {
-    alert("Maximum 5 classes allowed.");
+    alert("Максимум 5 класи се дозволени.");
     return;
   }
 
   const nextIndex = CLASS_NAMES.length;
-  CLASS_NAMES.push(`Class ${nextIndex + 1}`);
+  CLASS_NAMES.push(`Класа ${nextIndex + 1}`);
   examplesCount[nextIndex] = 0;
   renderClassControls();
   appendSnapshotRow(nextIndex);
@@ -173,7 +173,7 @@ function removeClass(event) {
   const removeIndex = parseInt(button.getAttribute("data-class-index"), 10);
 
   if (CLASS_NAMES.length <= 2) {
-    alert("At least 2 classes are required.");
+    alert("Минимум 2 класи се потребни.");
     return;
   }
 
@@ -230,7 +230,7 @@ async function loadMobileNetModel() {
     console.log(answer.shape); // should be [1, 1024]
   });
 
-  STATUS.innerHTML = "Model Loaded Successfully";
+  STATUS.innerHTML = "МобиленНет моделот е вчитан. Можете да започнете со собирање на податоци.";
 }
 
 loadMobileNetModel();
@@ -242,7 +242,7 @@ function hasGetUserMedia() {
 
 async function enumerateCameras() {
   if (!hasGetUserMedia()) {
-    console.warn("No camera access available");
+    console.warn("Нема камери");
     return;
   }
 
@@ -252,12 +252,12 @@ async function enumerateCameras() {
     
     if (videoDevices.length > 1) {
       CAMERA_SELECT.style.display = "block";
-      CAMERA_SELECT.innerHTML = '<option value="">Select Camera</option>';
+      CAMERA_SELECT.innerHTML = '<option value="">Избери Камера</option>';
       
       videoDevices.forEach((device, index) => {
         const option = document.createElement("option");
         option.value = device.deviceId;
-        option.text = device.label || `Camera ${index + 1}`;
+        option.text = device.label || `Камера ${index + 1}`;
         CAMERA_SELECT.appendChild(option);
       });
     } else if (videoDevices.length === 1) {
@@ -293,7 +293,7 @@ function enableCam() {
       });
     }).catch(function(err) {
       console.error("Camera access error:", err);
-      alert("Unable to access selected camera. Please check permissions or try another camera.");
+      alert("Не можам да пристапам до камерата. Проверете ги дозволите и пробајте повторно.");
     });
   } else {
     console.warn("No Cams");
@@ -392,7 +392,7 @@ function predictLoop() {
       let prediction = model.predict(imageFeature).squeeze();
       let highestIndex = prediction.argMax().arraySync();
       let predictionArray = prediction.arraySync();
-      STATUS.innerText = "Prediction " + CLASS_NAMES[highestIndex] + ' with ' + Math.floor(predictionArray[highestIndex] * 100) + ' %';
+      STATUS.innerText = "Предвидување: " + CLASS_NAMES[highestIndex] + ' with ' + Math.floor(predictionArray[highestIndex] * 100) + ' %';
     });
     window.requestAnimationFrame(predictLoop);
   }
@@ -410,7 +410,7 @@ function reset(){
   examplesCount.splice(0);
   SNAPSHOTS.innerHTML = '';
   createSnapshotRows();
-  STATUS.innerText = 'No Data Collected';
+  STATUS.innerText = 'Нема собрано податоци';
   console.log('Tensors in memory ' + tf.memory().numTensors);
 }
 
